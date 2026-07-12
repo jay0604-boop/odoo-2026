@@ -77,5 +77,43 @@ export const mockData = {
     { id: 2, resource: "Ford Transit Van (AF-0088)", type: "Vehicle", requester: "Bob Jones", date: "2026-07-12", startTime: "01:00 PM", endTime: "04:00 PM", status: "Ongoing" },
     { id: 3, resource: "Epson Projector Pro", type: "Equipment", requester: "Charlie Brown", date: "2026-07-13", startTime: "09:00 AM", endTime: "05:00 PM", status: "Upcoming" },
     { id: 4, resource: "Conference Room A1", type: "Room", requester: "David Lee", date: "2026-07-13", startTime: "02:00 PM", endTime: "03:00 PM", status: "Cancelled" }
+  ],
+  employees: [
+    { id: 1, name: "Alice Smith", email: "alice@company.com", department: "Engineering", role: "Admin", status: "Active" },
+    { id: 2, name: "Bob Jones", email: "bob@company.com", department: "Facilities", role: "Asset Manager", status: "Active" },
+    { id: 3, name: "Charlie Brown", email: "charlie@company.com", department: "IT Support", role: "Employee", status: "Active" },
+    { id: 4, name: "David Lee", email: "david@company.com", department: "Engineering", role: "Department Head", status: "Active" },
+    { id: 5, name: "Eve Davis", email: "eve@company.com", department: "HR", role: "Employee", status: "Inactive" }
+  ],
+  departments: [
+    { id: 1, name: "Engineering", head: "David Lee", parent: "None", status: "Active", assetCount: 142 },
+    { id: 2, name: "IT Support", head: "Unassigned", parent: "Engineering", status: "Active", assetCount: 35 },
+    { id: 3, name: "Facilities", head: "Unassigned", parent: "None", status: "Active", assetCount: 88 },
+    { id: 4, name: "HR", head: "Sarah Connor", parent: "None", status: "Active", assetCount: 12 }
+  ],
+  categories: [
+    { id: 1, name: "Laptop", prefix: "LT", customFields: ["Processor", "RAM", "Storage"], bookable: false },
+    { id: 2, name: "Vehicle", prefix: "VH", customFields: ["License Plate", "Mileage"], bookable: true },
+    { id: 3, name: "Meeting Room", prefix: "RM", customFields: ["Capacity", "Has Projector"], bookable: true },
+    { id: 4, name: "Peripherals", prefix: "PR", customFields: ["Connector Type"], bookable: false }
+  ],
+  auditCycles: [
+    { id: 1, title: "Q3 Engineering Hardware Audit", scope: "Engineering", startDate: "2026-07-01", endDate: "2026-07-15", auditors: ["Bob Jones"], status: "Ongoing", totalAssets: 142, verifiedCount: 130 },
+    { id: 2, title: "Annual IT Inventory Check", scope: "IT Support", startDate: "2026-01-10", endDate: "2026-01-20", auditors: ["Alice Smith"], status: "Closed", totalAssets: 35, verifiedCount: 34 }
+  ],
+  auditFindings: [
+    { id: 1, cycleId: 1, assetTag: "AF-0012", assetName: "Dell XPS 15", expectedLocation: "Desk 4A", status: "Verified" },
+    { id: 2, cycleId: 1, assetTag: "AF-0015", assetName: "MacBook Pro M3", expectedLocation: "Desk 4B", status: "Missing" },
+    { id: 3, cycleId: 1, assetTag: "AF-0088", assetName: "Ford Transit Van", expectedLocation: "Garage A", status: "Damaged" },
+    { id: 4, cycleId: 1, assetTag: "AF-0102", assetName: "Logitech MX Master 3", expectedLocation: "Desk 2C", status: "Pending" }
+  ],
+  activityLogs: [
+    { id: 1, timestamp: "2026-07-12T10:42:00Z", actor: "Alice Smith (Admin)", action: "Approved Transfer Request", entity: "Transfer TR-092 (Asset AF-0033)", category: "Allocation" },
+    { id: 2, timestamp: "2026-07-12T09:15:00Z", actor: "System", action: "Flagged Overdue Return", entity: "Allocation AL-441 (Asset AF-0021)", category: "Alert" },
+    { id: 3, timestamp: "2026-07-11T16:30:00Z", actor: "Bob Jones (Asset Manager)", action: "Assigned Asset", entity: "Asset AF-0115 to Eve Davis", category: "Allocation" },
+    { id: 4, timestamp: "2026-07-11T14:20:00Z", actor: "David Lee (Dept Head)", action: "Created Audit Cycle", entity: "Q3 Engineering Hardware Audit", category: "Audit" },
+    { id: 5, timestamp: "2026-07-11T11:05:00Z", actor: "Charlie Brown (Employee)", action: "Raised Maintenance Request", entity: "Asset AF-0012 (Screen Flicker)", category: "Maintenance" },
+    { id: 6, timestamp: "2026-07-10T15:45:00Z", actor: "Alice Smith (Admin)", action: "Promoted Employee Role", entity: "Bob Jones -> Asset Manager", category: "Security" },
+    { id: 7, timestamp: "2026-07-10T09:00:00Z", actor: "System", action: "Cancelled Overlapping Booking", entity: "Booking BK-102 (Conference Room A1)", category: "Booking" }
   ]
 };
