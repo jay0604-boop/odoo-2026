@@ -1,1 +1,3 @@
-# Isolated file: handles audit cycles
+from fastapi import APIRouter
+
+router = APIRouter()
