@@ -1,1 +1,3 @@
-# Isolated file: handles org/employee setup
+from fastapi import APIRouter
+
+router = APIRouter()

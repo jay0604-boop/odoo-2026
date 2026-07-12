@@ -7,6 +7,8 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///../../assetflow_shared.db")
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
 engine = create_engine(
     DATABASE_URL, 
@@ -22,3 +24,4 @@ def get_db():
         yield db
     finally:
         db.close()
+
