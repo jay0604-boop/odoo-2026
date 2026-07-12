@@ -71,5 +71,11 @@ export const mockData = {
     { id: 4, type: "Approvals", message: "Transfer approved : AF-0033 to facilities dept", time: "3h ago", severity: "info" },
     { id: 5, type: "Alerts", message: "Overdue return : AF-0021 was due 3 days ago", time: "1d ago", severity: "warning" },
     { id: 6, type: "Alerts", message: "Audit discrepancy flagged : AF-0088 damaged", time: "2d ago", severity: "error" }
+  ],
+  bookings: [
+    { id: 1, resource: "Conference Room B2", type: "Room", requester: "Alice Smith", date: "2026-07-12", startTime: "10:00 AM", endTime: "11:30 AM", status: "Completed" },
+    { id: 2, resource: "Ford Transit Van (AF-0088)", type: "Vehicle", requester: "Bob Jones", date: "2026-07-12", startTime: "01:00 PM", endTime: "04:00 PM", status: "Ongoing" },
+    { id: 3, resource: "Epson Projector Pro", type: "Equipment", requester: "Charlie Brown", date: "2026-07-13", startTime: "09:00 AM", endTime: "05:00 PM", status: "Upcoming" },
+    { id: 4, resource: "Conference Room A1", type: "Room", requester: "David Lee", date: "2026-07-13", startTime: "02:00 PM", endTime: "03:00 PM", status: "Cancelled" }
   ]
 };

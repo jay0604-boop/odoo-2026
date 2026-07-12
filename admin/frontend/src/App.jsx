@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import AdminSidebar from "./components/AdminSidebar";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -9,6 +10,19 @@ import MaintenanceKanban from "./pages/MaintenanceKanban";
 import AuditCycles from "./pages/AuditCycles";
 import AnalyticsReports from "./pages/AnalyticsReports";
 import GlobalLogs from "./pages/GlobalLogs";
+import ResourceBooking from "./pages/ResourceBooking";
+
+// Route protection wrapper
+function AuthGuard({ children }) {
+  const { user } = useAuth();
+  
+  if (!user) {
+    // Not authenticated, redirect to login
+    return <Navigate to="/login" replace />;
+  }
+  
+  return children;
+}
 
 function Layout() {
   return (
@@ -23,23 +37,25 @@ function Layout() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        
-        {/* Protected Dashboard Routes wrapped in Layout */}
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="org-setup" element={<OrgSetup />} />
-          <Route path="assets" element={<AssetRegistry />} />
-          <Route path="allocation-transfer" element={<TransferApprovals />} />
-          <Route path="resource-booking" element={<div><h1 className="text-2xl font-semibold">Resource Booking</h1><p className="mt-2 text-charcoal/70">Placeholder for Screen 6</p></div>} />
-          <Route path="maintenance" element={<MaintenanceKanban />} />
-          <Route path="audits" element={<AuditCycles />} />
-          <Route path="reports" element={<AnalyticsReports />} />
-          <Route path="logs" element={<GlobalLogs />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          
+          {/* Protected Dashboard Routes wrapped in AuthGuard and Layout */}
+          <Route path="/" element={<AuthGuard><Layout /></AuthGuard>}>
+            <Route index element={<Dashboard />} />
+            <Route path="org-setup" element={<OrgSetup />} />
+            <Route path="assets" element={<AssetRegistry />} />
+            <Route path="allocation-transfer" element={<TransferApprovals />} />
+            <Route path="resource-booking" element={<ResourceBooking />} />
+            <Route path="maintenance" element={<MaintenanceKanban />} />
+            <Route path="audits" element={<AuditCycles />} />
+            <Route path="reports" element={<AnalyticsReports />} />
+            <Route path="logs" element={<GlobalLogs />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
