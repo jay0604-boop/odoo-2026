@@ -1,10 +1,16 @@
 import { useState, useEffect } from "react";
 import { maintenanceApi } from "../api/maintenanceApi";
-import { Clock, CheckCircle2, ChevronRight, User } from "lucide-react";
+import { Clock, CheckCircle2, ChevronRight, User, Camera, X } from "lucide-react";
 
 export default function MaintenanceKanban() {
   const [requests, setRequests] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Upload Modal State
+  const [uploadModal, setUploadModal] = useState({ isOpen: false, requestId: null });
+  const [photoFile, setPhotoFile] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const columns = [
     { id: "Pending", label: "Pending", color: "bg-amber/10 border-amber" },
@@ -26,7 +32,11 @@ export default function MaintenanceKanban() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+    
+    return () => {
+      if (photoPreview) URL.revokeObjectURL(photoPreview);
+    };
+  }, [photoPreview]);
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -43,6 +53,36 @@ export default function MaintenanceKanban() {
       setRequests(reqs => reqs.map(r => r.id === id ? { ...r, status: nextStatus } : r));
       await maintenanceApi.updateStatus(id, nextStatus);
     }
+  };
+
+  const handlePhotoSelection = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPhotoFile(file);
+      setPhotoPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleUploadSubmit = async (e) => {
+    e.preventDefault();
+    if (!photoFile || !uploadModal.requestId) return;
+
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append("requestId", uploadModal.requestId);
+    formData.append("repairPhoto", photoFile);
+
+    await maintenanceApi.uploadRepairPhoto(formData, { 
+      headers: { 'Content-Type': 'multipart/form-data' } 
+    });
+
+    setIsUploading(false);
+    
+    // Cleanup
+    if (photoPreview) URL.revokeObjectURL(photoPreview);
+    setPhotoFile(null);
+    setPhotoPreview(null);
+    setUploadModal({ isOpen: false, requestId: null });
   };
 
   const getNextStatusLabel = (currentStatus) => {
@@ -99,13 +139,24 @@ export default function MaintenanceKanban() {
                         </div>
 
                         {col.id !== "Resolved" && (
-                          <button 
-                            onClick={() => handleStatusChange(req.id, req.status)}
-                            className="w-full flex items-center justify-between px-3 py-2 bg-navy/5 hover:bg-navy text-navy hover:text-cream text-sm font-medium rounded transition"
-                          >
-                            Move to {getNextStatusLabel(req.status)}
-                            <ChevronRight size={16} />
-                          </button>
+                          <div className="flex gap-2">
+                            <button 
+                              onClick={() => handleStatusChange(req.id, req.status)}
+                              className="flex-1 flex items-center justify-between px-3 py-2 bg-navy/5 hover:bg-navy text-navy hover:text-cream text-sm font-medium rounded transition"
+                            >
+                              Move to {getNextStatusLabel(req.status)}
+                              <ChevronRight size={16} />
+                            </button>
+                            {(col.id === "In Progress" || col.id === "Technician Assigned") && (
+                              <button 
+                                onClick={() => setUploadModal({ isOpen: true, requestId: req.id })}
+                                title="Attach Repair Photo"
+                                className="px-3 py-2 bg-beige text-charcoal hover:bg-beige/80 text-sm rounded transition border border-navy/10 flex items-center justify-center shrink-0"
+                              >
+                                <Camera size={16} />
+                              </button>
+                            )}
+                          </div>
                         )}
                         {col.id === "Resolved" && (
                           <div className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-sage/10 text-sage text-sm font-medium rounded border border-sage/20">
@@ -119,6 +170,64 @@ export default function MaintenanceKanban() {
               </div>
             );
           })}
+        </div>
+      )}
+      {/* Photo Upload Modal */}
+      {uploadModal.isOpen && (
+        <div className="fixed inset-0 bg-navy/60 flex items-center justify-center z-50 p-4 animate-in fade-in">
+          <div className="bg-cream w-full max-w-md rounded-xl shadow-xl overflow-hidden animate-in zoom-in-95">
+            <div className="flex justify-between items-center p-5 border-b border-navy/10 bg-white">
+              <h3 className="text-xl font-bold text-navy flex items-center gap-2"><Camera size={20} /> Attach Repair Photo</h3>
+              <button 
+                onClick={() => {
+                  setUploadModal({ isOpen: false, requestId: null });
+                  if (photoPreview) URL.revokeObjectURL(photoPreview);
+                  setPhotoPreview(null);
+                  setPhotoFile(null);
+                }} 
+                className="text-charcoal/50 hover:text-charcoal p-1"
+              ><X size={20}/></button>
+            </div>
+            
+            <form onSubmit={handleUploadSubmit} className="p-6">
+              <div className="mb-6 border-2 border-dashed border-navy/20 rounded-lg p-6 text-center hover:bg-white transition cursor-pointer relative group">
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={handlePhotoSelection} 
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" 
+                />
+                {photoPreview ? (
+                  <div className="relative h-48 w-full rounded overflow-hidden">
+                    <img src={photoPreview} alt="Upload Preview" className="w-full h-full object-cover" />
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center text-charcoal/60">
+                    <Camera className="text-navy/40 mb-3 group-hover:text-navy transition" size={32} />
+                    <span className="font-medium">Click or drag image here</span>
+                    <span className="text-xs mt-1">JPEG, PNG up to 10MB</span>
+                  </div>
+                )}
+              </div>
+              
+              <div className="flex justify-end gap-3">
+                <button 
+                  type="button" 
+                  onClick={() => setUploadModal({ isOpen: false, requestId: null })}
+                  className="px-4 py-2 rounded-md font-medium text-charcoal hover:bg-navy/5 transition"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  disabled={!photoFile || isUploading}
+                  className="px-6 py-2 rounded-md font-bold bg-navy text-white hover:bg-navy/90 transition disabled:opacity-50 flex items-center gap-2"
+                >
+                  {isUploading ? "Uploading..." : "Upload Photo"}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

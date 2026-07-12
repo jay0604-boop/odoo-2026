@@ -35,5 +35,40 @@ export const mockData = {
     { id: 1, assetTag: "AF-0062", assetName: "Dell XPS 15", issue: "Screen flickering randomly", priority: "High", status: "Pending", requester: "Alice Smith" },
     { id: 2, assetTag: "AF-0014", assetName: "Herman Miller Chair", issue: "Broken armrest", priority: "Low", status: "In Progress", requester: "Charlie Brown" },
     { id: 3, assetTag: "AF-0088", assetName: "Ford Transit Van", issue: "Check engine light", priority: "Critical", status: "Approved", requester: "Bob Jones" }
+  ],
+  transfers: [
+    { id: 1, assetTag: "AF-0114", assetName: "Dell Laptop", from: "Alice Smith", to: "David Lee", reason: "Project Reassignment", dateRequested: "2026-07-10", status: "Pending", hasConflict: true },
+    { id: 2, assetTag: "AF-0012", assetName: "Sony A7S III Camera", from: "Bob Jones", to: "Sarah Connor", reason: "Marketing Event", dateRequested: "2026-07-11", status: "Pending", hasConflict: false }
+  ],
+  analytics: {
+    utilization: [
+      { department: "Engineering", high: 45, idle: 5 },
+      { department: "Marketing", high: 20, idle: 15 },
+      { department: "Sales", high: 35, idle: 2 },
+      { department: "HR", high: 8, idle: 4 }
+    ],
+    maintenanceFreq: [
+      { month: "Jan", count: 12 }, { month: "Feb", count: 15 }, { month: "Mar", count: 8 }, { month: "Apr", count: 22 }, { month: "May", count: 18 }, { month: "Jun", count: 25 }
+    ],
+    mostUsed: [
+      { tag: "AF-0021", name: "Conference Room A Projector" },
+      { tag: "AF-0044", name: "Delivery Van (White)" }
+    ],
+    idle: [
+      { tag: "AF-0301", name: "Sony A6400 Camera", days: 62 },
+      { tag: "AF-0118", name: "Standing Desk Frame", days: 45 }
+    ],
+    nearingRetirement: [
+      { tag: "AF-0005", name: "Old ThinkPad T480", reason: "End of Lifecycle" },
+      { tag: "AF-0014", name: "Herman Miller Chair", reason: "Due for Maintenance" }
+    ]
+  },
+  logs: [
+    { id: 1, type: "Approvals", message: "Laptop AF-0014 assigned to Priya Shah", time: "2m ago", severity: "info" },
+    { id: 2, type: "Approvals", message: "Maintenance request AF-0055 approved", time: "18m ago", severity: "info" },
+    { id: 3, type: "Bookings", message: "Booking confirmed : Room B2 : 2:00 to 3:00 PM", time: "1h ago", severity: "info" },
+    { id: 4, type: "Approvals", message: "Transfer approved : AF-0033 to facilities dept", time: "3h ago", severity: "info" },
+    { id: 5, type: "Alerts", message: "Overdue return : AF-0021 was due 3 days ago", time: "1d ago", severity: "warning" },
+    { id: 6, type: "Alerts", message: "Audit discrepancy flagged : AF-0088 damaged", time: "2d ago", severity: "error" }
   ]
 };

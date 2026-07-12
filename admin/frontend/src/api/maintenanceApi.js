@@ -14,5 +14,12 @@ export const maintenanceApi = {
       req.status = newStatus;
     }
     return req;
+  },
+  
+  uploadRepairPhoto: async (formData, config) => {
+    await delay(500);
+    // Simulate processing the binary file data attached to the request
+    // formData.get('requestId') and formData.get('photo')
+    return { success: true };
   }
 };
