@@ -51,16 +51,17 @@ export const mockData = {
       { month: "Jan", count: 12 }, { month: "Feb", count: 15 }, { month: "Mar", count: 8 }, { month: "Apr", count: 22 }, { month: "May", count: 18 }, { month: "Jun", count: 25 }
     ],
     mostUsed: [
-      { tag: "AF-0021", name: "Conference Room A Projector" },
-      { tag: "AF-0044", name: "Delivery Van (White)" }
+      { tag: "Room B2", name: "34 bookings this month" },
+      { tag: "AF-343", name: "Van - 21 trips this month" },
+      { tag: "AF-335", name: "Projector - 18 uses" }
     ],
     idle: [
-      { tag: "AF-0301", name: "Sony A6400 Camera", days: 62 },
-      { tag: "AF-0118", name: "Standing Desk Frame", days: 45 }
+      { tag: "AF-0301", name: "Camera", days: "60+" },
+      { tag: "AF-0410", name: "chair", days: "45" }
     ],
     nearingRetirement: [
-      { tag: "AF-0005", name: "Old ThinkPad T480", reason: "End of Lifecycle" },
-      { tag: "AF-0014", name: "Herman Miller Chair", reason: "Due for Maintenance" }
+      { tag: "AF-0089", name: "Forklift", reason: "service due in 5 days" },
+      { tag: "AF-0020", name: "Laptop", reason: "4 years old : nearing retirement" }
     ]
   },
   logs: [

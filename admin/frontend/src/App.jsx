@@ -1,5 +1,6 @@
-import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom";
 import AdminSidebar from "./components/AdminSidebar";
+import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import OrgSetup from "./pages/OrgSetup";
 import AssetRegistry from "./pages/AssetRegistry";
@@ -24,6 +25,9 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/login" element={<Login />} />
+        
+        {/* Protected Dashboard Routes wrapped in Layout */}
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path="org-setup" element={<OrgSetup />} />
