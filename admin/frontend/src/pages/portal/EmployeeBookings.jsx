@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Calendar, Clock, MapPin, Users, Plus, ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 const MOCK_RESOURCES = [
   {
@@ -21,11 +22,29 @@ const MOCK_RESOURCES = [
   }
 ];
 
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 }
+  }
+};
+
+const item = {
+  hidden: { opacity: 0, x: -20 },
+  show: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+};
+
 export default function EmployeeBookings() {
   const [resources] = useState(MOCK_RESOURCES);
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <motion.div 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      className="space-y-8"
+    >
       <header className="flex justify-between items-end">
         <div>
           <h1 className="text-3xl font-bold text-navy tracking-tight">Resource Booking</h1>
@@ -45,9 +64,14 @@ export default function EmployeeBookings() {
           </h2>
         </div>
         
-        <div className="divide-y divide-cream/50">
+        <motion.div 
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="divide-y divide-cream/50"
+        >
           {resources.map((resource) => (
-            <div key={resource.id} className="p-6 hover:bg-white/50 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4 group">
+            <motion.div variants={item} key={resource.id} className="p-6 hover:bg-white/50 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4 group">
               
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-1">
@@ -83,10 +107,10 @@ export default function EmployeeBookings() {
                 </button>
               </div>
 
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }

@@ -17,7 +17,6 @@ DROP TABLE IF EXISTS asset_categories CASCADE;
 -- departments has a circular dependency with profiles, CASCADE handles it
 DROP TABLE IF EXISTS departments CASCADE;
 DROP TABLE IF EXISTS profiles CASCADE;
-
 DROP TYPE IF EXISTS employee_role CASCADE;
 DROP TYPE IF EXISTS account_status CASCADE;
 DROP TYPE IF EXISTS asset_status CASCADE;

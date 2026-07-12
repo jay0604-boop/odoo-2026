@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Laptop, Smartphone, AlertTriangle, ArrowLeftRight, CheckCircle2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 const MOCK_MY_ASSETS = [
   {
@@ -24,11 +25,29 @@ const MOCK_MY_ASSETS = [
   }
 ];
 
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 }
+  }
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+};
+
 export default function EmployeeAssets() {
   const [assets, setAssets] = useState(MOCK_MY_ASSETS);
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <motion.div 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      className="space-y-8"
+    >
       <header className="flex justify-between items-end">
         <div>
           <h1 className="text-3xl font-bold text-navy tracking-tight">My Assigned Assets</h1>
@@ -36,9 +55,15 @@ export default function EmployeeAssets() {
         </div>
       </header>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <motion.div 
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+      >
         {assets.map((asset) => (
-          <div 
+          <motion.div 
+            variants={item}
             key={asset.id}
             className="bg-white/80 backdrop-blur-md rounded-2xl border border-white shadow-sm hover:shadow-md transition-all p-6 group"
           >
@@ -78,9 +103,9 @@ export default function EmployeeAssets() {
                 Report Issue
               </button>
             </div>
-          </div>
+          </motion.div>
         ))}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

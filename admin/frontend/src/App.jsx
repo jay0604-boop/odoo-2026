@@ -1,5 +1,6 @@
-import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { AnimatePresence } from "framer-motion";
 import AdminSidebar from "./components/AdminSidebar";
 import EmployeeLayout from "./components/EmployeeLayout";
 
@@ -44,35 +45,46 @@ function AdminLayout() {
   );
 }
 
+// Extracted routes wrapper to use useLocation
+function AnimatedRoutes() {
+  const location = useLocation();
+  
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/login" element={<Login />} />
+        
+        {/* Protected Admin Routes */}
+        <Route path="/" element={<AuthGuard><AdminLayout /></AuthGuard>}>
+          <Route index element={<Dashboard />} />
+          <Route path="org-setup" element={<OrgSetup />} />
+          <Route path="assets" element={<AssetRegistry />} />
+          <Route path="allocation-transfer" element={<TransferApprovals />} />
+          <Route path="resource-booking" element={<ResourceBooking />} />
+          <Route path="maintenance" element={<MaintenanceKanban />} />
+          <Route path="audits" element={<AuditCycles />} />
+          <Route path="reports" element={<AnalyticsReports />} />
+          <Route path="logs" element={<GlobalLogs />} />
+        </Route>
+
+        {/* Protected Employee Portal Routes */}
+        <Route path="/portal" element={<AuthGuard><EmployeeLayout /></AuthGuard>}>
+          <Route index element={<EmployeeDashboard />} />
+          <Route path="assets" element={<EmployeeAssets />} />
+          <Route path="bookings" element={<EmployeeBookings />} />
+          <Route path="requests" element={<EmployeeRequests />} />
+        </Route>
+        
+      </Routes>
+    </AnimatePresence>
+  );
+}
+
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          
-          {/* Protected Admin Routes */}
-          <Route path="/" element={<AuthGuard><AdminLayout /></AuthGuard>}>
-            <Route index element={<Dashboard />} />
-            <Route path="org-setup" element={<OrgSetup />} />
-            <Route path="assets" element={<AssetRegistry />} />
-            <Route path="allocation-transfer" element={<TransferApprovals />} />
-            <Route path="resource-booking" element={<ResourceBooking />} />
-            <Route path="maintenance" element={<MaintenanceKanban />} />
-            <Route path="audits" element={<AuditCycles />} />
-            <Route path="reports" element={<AnalyticsReports />} />
-            <Route path="logs" element={<GlobalLogs />} />
-          </Route>
-
-          {/* Protected Employee Portal Routes */}
-          <Route path="/portal" element={<AuthGuard><EmployeeLayout /></AuthGuard>}>
-            <Route index element={<EmployeeDashboard />} />
-            <Route path="assets" element={<EmployeeAssets />} />
-            <Route path="bookings" element={<EmployeeBookings />} />
-            <Route path="requests" element={<EmployeeRequests />} />
-          </Route>
-          
-        </Routes>
+        <AnimatedRoutes />
       </BrowserRouter>
     </AuthProvider>
   );

@@ -10,6 +10,17 @@ import {
   AlertOctagon,
   Bell
 } from "lucide-react";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { staggerChildren: 0.1 } }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+};
 
 export default function Dashboard() {
   const [kpis, setKpis] = useState(null);
@@ -40,7 +51,12 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto pb-12">
+    <motion.div 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      className="max-w-7xl mx-auto pb-12"
+    >
       <div className="flex justify-between items-end mb-8 border-b border-navy/10 pb-4">
         <div>
           <h1 className="text-3xl font-bold text-navy">Command Center</h1>
@@ -55,11 +71,16 @@ export default function Dashboard() {
       ) : (
         <>
           {/* KPI Blocks Row */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-10"
+          >
             {kpiCards.map((card, idx) => {
               const Icon = card.icon;
               return (
-                <div key={idx} className="bg-cream rounded-xl p-5 border border-navy/10 shadow-sm hover:shadow transition-shadow flex flex-col justify-between">
+                <motion.div variants={itemVariants} key={idx} className="bg-cream rounded-xl p-5 border border-navy/10 shadow-sm hover:shadow transition-shadow flex flex-col justify-between">
                   <div className="flex justify-between items-start mb-4">
                     <Icon className={`${card.color} opacity-80`} size={24} />
                   </div>
@@ -67,10 +88,10 @@ export default function Dashboard() {
                     <div className="text-3xl font-bold text-navy mb-1">{card.value}</div>
                     <div className="text-xs font-bold text-charcoal/70 uppercase tracking-widest leading-tight">{card.label}</div>
                   </div>
-                </div>
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
 
           {/* Overdue Returns Section */}
           <div className="mb-8">
@@ -117,6 +138,6 @@ export default function Dashboard() {
           </div>
         </>
       )}
-    </div>
+    </motion.div>
   );
 }

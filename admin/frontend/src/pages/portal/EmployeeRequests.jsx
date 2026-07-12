@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { PenTool, CheckCircle, Clock, AlertCircle, ArrowRightLeft } from "lucide-react";
+import { motion } from "framer-motion";
 
 const MOCK_REQUESTS = [
   {
@@ -21,6 +22,19 @@ const MOCK_REQUESTS = [
     date: "2026-07-11",
   }
 ];
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 }
+  }
+};
+
+const item = {
+  hidden: { opacity: 0, x: -20 },
+  show: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+};
 
 export default function EmployeeRequests() {
   const [requests] = useState(MOCK_REQUESTS);
@@ -50,7 +64,12 @@ export default function EmployeeRequests() {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <motion.div 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      className="space-y-8"
+    >
       <header className="flex justify-between items-end">
         <div>
           <h1 className="text-3xl font-bold text-navy tracking-tight">My Requests</h1>
@@ -59,9 +78,14 @@ export default function EmployeeRequests() {
       </header>
       
       <div className="bg-white/70 backdrop-blur-md rounded-2xl border border-white shadow-sm overflow-hidden">
-        <div className="divide-y divide-cream/50">
+        <motion.div 
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="divide-y divide-cream/50"
+        >
           {requests.map((req) => (
-            <div key={req.id} className="p-6 hover:bg-white/50 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <motion.div variants={item} key={req.id} className="p-6 hover:bg-white/50 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4">
               
               <div className="flex items-start gap-4 flex-1">
                 <div className={`p-3 rounded-xl mt-1 ${req.type === 'Maintenance' ? 'bg-rust/10 text-rust' : 'bg-navy/10 text-navy'}`}>
@@ -89,7 +113,7 @@ export default function EmployeeRequests() {
                 </button>
               </div>
 
-            </div>
+            </motion.div>
           ))}
           
           {requests.length === 0 && (
@@ -97,8 +121,8 @@ export default function EmployeeRequests() {
               You have no active requests.
             </div>
           )}
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }

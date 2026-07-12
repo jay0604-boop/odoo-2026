@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { DataService } from "../lib/dataService";
 import { Plus, X, Search, Filter, Image as ImageIcon } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function AssetRegistry() {
   const [assets, setAssets] = useState([]);
@@ -140,7 +141,12 @@ export default function AssetRegistry() {
   });
 
   return (
-    <div className="max-w-7xl mx-auto h-full flex flex-col pb-6 pr-2">
+    <motion.div 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      className="max-w-7xl mx-auto h-full flex flex-col pb-6 pr-2"
+    >
       <div className="flex justify-between items-end mb-6 border-b border-navy/10 pb-4 shrink-0">
         <div>
           <h1 className="text-3xl font-bold text-navy">Asset Registry</h1>
@@ -262,9 +268,21 @@ export default function AssetRegistry() {
       </div>
 
       {/* Register Side Drawer */}
-      {isDrawerOpen && (
-        <div className="fixed inset-0 bg-navy/60 flex justify-end z-50 animate-in fade-in">
-          <div className="w-full max-w-md bg-cream h-full shadow-2xl p-6 overflow-y-auto border-l border-navy/10 animate-in slide-in-from-right-full">
+      <AnimatePresence>
+        {isDrawerOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-navy/60 flex justify-end z-50"
+          >
+            <motion.div 
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="w-full max-w-md bg-cream h-full shadow-2xl p-6 overflow-y-auto border-l border-navy/10"
+            >
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-navy">Register Asset</h2>
               <button onClick={() => setIsDrawerOpen(false)} className="text-charcoal/50 hover:text-charcoal transition p-1 bg-navy/5 rounded hover:bg-navy/10"><X size={20} /></button>
@@ -359,9 +377,10 @@ export default function AssetRegistry() {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
-    </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }

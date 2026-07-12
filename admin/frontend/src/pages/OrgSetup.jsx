@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Users, Building2, Tags, Search, Plus, Edit2, Shield, MoreVertical } from 'lucide-react';
 import { mockData } from '../mocks/sharedMockData';
+import { motion } from 'framer-motion';
 
 export default function OrgSetup() {
   const [activeTab, setActiveTab] = useState('employees');
@@ -22,7 +23,12 @@ export default function OrgSetup() {
   };
 
   return (
-    <div className="h-full flex flex-col space-y-6">
+    <motion.div 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      className="h-full flex flex-col space-y-6"
+    >
       {/* Header */}
       <div className="flex justify-between items-center shrink-0">
         <div>
@@ -217,6 +223,6 @@ export default function OrgSetup() {
         )}
 
       </div>
-    </div>
+    </motion.div>
   );
 }
