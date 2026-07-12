@@ -120,10 +120,25 @@ export default function ResourceBooking() {
 
         <div className="flex items-center gap-4 text-navy">
           <button onClick={handlePrevDay} className="p-1 hover:bg-beige rounded-md transition-colors"><ChevronLeft size={20} /></button>
-          <div className="flex items-center gap-2 font-semibold min-w-[140px] justify-center">
-            <Calendar size={18} />
-            <span>{formatUIHeaderDate(currentDate)}</span>
+          
+          <div className="relative flex items-center justify-center min-w-[140px] group cursor-pointer">
+            <input 
+              type="date" 
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              value={formatFilterDate(currentDate)}
+              onChange={(e) => {
+                if (e.target.value) {
+                  const [y, m, d] = e.target.value.split('-');
+                  setCurrentDate(new Date(y, m - 1, d));
+                }
+              }}
+            />
+            <div className="flex items-center gap-2 font-semibold text-navy group-hover:text-navy/70 transition-colors pointer-events-none">
+              <Calendar size={18} />
+              <span>{formatUIHeaderDate(currentDate)}</span>
+            </div>
           </div>
+
           <button onClick={handleNextDay} className="p-1 hover:bg-beige rounded-md transition-colors"><ChevronRight size={20} /></button>
         </div>
       </div>
