@@ -1,8 +1,10 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Users, Box, ArrowRightLeft, CalendarClock, PenTool, ClipboardCheck, BarChart2, Bell } from "lucide-react";
+import { LayoutDashboard, Users, Box, ArrowRightLeft, CalendarClock, PenTool, ClipboardCheck, BarChart2, Bell, LogOut } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 export default function AdminSidebar() {
   const location = useLocation();
+  const { signOut } = useAuth();
 
   const navItems = [
     { name: "Dashboard", path: "/", icon: <LayoutDashboard size={18} /> },
@@ -39,8 +41,21 @@ export default function AdminSidebar() {
           );
         })}
       </nav>
-      <div className="p-4 border-t border-cream/10 text-sm text-cream/50">
-        Logged in as Admin
+      <div className="p-4 border-t border-cream/10 text-sm flex flex-col gap-3">
+        <span className="text-cream/50">Logged in as Admin</span>
+        <Link 
+          to="/portal" 
+          className="flex items-center justify-center gap-2 bg-cream/10 hover:bg-cream/20 text-cream py-2 px-3 rounded transition-colors"
+        >
+          View Employee Portal
+        </Link>
+        <button 
+          onClick={signOut}
+          className="flex items-center justify-center gap-2 text-rust hover:text-rust-dark hover:bg-rust/10 py-2 px-3 rounded transition-colors w-full"
+        >
+          <LogOut size={16} />
+          Sign Out
+        </button>
       </div>
     </aside>
   );

@@ -1,6 +1,9 @@
 import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import AdminSidebar from "./components/AdminSidebar";
+import EmployeeLayout from "./components/EmployeeLayout";
+
+// Admin Pages
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import OrgSetup from "./pages/OrgSetup";
@@ -11,6 +14,12 @@ import AuditCycles from "./pages/AuditCycles";
 import AnalyticsReports from "./pages/AnalyticsReports";
 import GlobalLogs from "./pages/GlobalLogs";
 import ResourceBooking from "./pages/ResourceBooking";
+
+// Portal Pages
+import EmployeeDashboard from "./pages/portal/EmployeeDashboard";
+import EmployeeAssets from "./pages/portal/EmployeeAssets";
+import EmployeeBookings from "./pages/portal/EmployeeBookings";
+import EmployeeRequests from "./pages/portal/EmployeeRequests";
 
 // Route protection wrapper
 function AuthGuard({ children }) {
@@ -24,7 +33,7 @@ function AuthGuard({ children }) {
   return children;
 }
 
-function Layout() {
+function AdminLayout() {
   return (
     <div className="flex min-h-screen bg-beige text-charcoal font-sans">
       <AdminSidebar />
@@ -42,8 +51,8 @@ export default function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           
-          {/* Protected Dashboard Routes wrapped in AuthGuard and Layout */}
-          <Route path="/" element={<AuthGuard><Layout /></AuthGuard>}>
+          {/* Protected Admin Routes */}
+          <Route path="/" element={<AuthGuard><AdminLayout /></AuthGuard>}>
             <Route index element={<Dashboard />} />
             <Route path="org-setup" element={<OrgSetup />} />
             <Route path="assets" element={<AssetRegistry />} />
@@ -54,6 +63,15 @@ export default function App() {
             <Route path="reports" element={<AnalyticsReports />} />
             <Route path="logs" element={<GlobalLogs />} />
           </Route>
+
+          {/* Protected Employee Portal Routes */}
+          <Route path="/portal" element={<AuthGuard><EmployeeLayout /></AuthGuard>}>
+            <Route index element={<EmployeeDashboard />} />
+            <Route path="assets" element={<EmployeeAssets />} />
+            <Route path="bookings" element={<EmployeeBookings />} />
+            <Route path="requests" element={<EmployeeRequests />} />
+          </Route>
+          
         </Routes>
       </BrowserRouter>
     </AuthProvider>

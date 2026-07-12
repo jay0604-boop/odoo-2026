@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { inventoryApi } from "../api/inventoryApi";
+import { DataService } from "../lib/dataService";
 import { Plus, X, Search, Filter, Image as ImageIcon } from "lucide-react";
 
 export default function AssetRegistry() {
@@ -19,7 +19,7 @@ export default function AssetRegistry() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [newAsset, setNewAsset] = useState({
     name: "",
-    category: "",
+    category_id: "",
     serialNumber: "",
     cost: "",
     condition: "New",
@@ -46,18 +46,23 @@ export default function AssetRegistry() {
 
   const fetchData = async () => {
     setIsLoading(true);
-    const [assetData, cats, depts] = await Promise.all([
-      inventoryApi.getAssets(),
-      inventoryApi.getCategories(),
-      inventoryApi.getDepartments()
-    ]);
-    setAssets(assetData);
-    if (cats.length > 0) {
-      setCategories(cats);
-      setNewAsset(prev => ({ ...prev, category: cats[0] }));
+    try {
+      const [assetData, cats, depts] = await Promise.all([
+        DataService.getAssets(),
+        DataService.getCategories(),
+        DataService.getDepartments()
+      ]);
+      setAssets(assetData);
+      if (cats.length > 0) {
+        setCategories(cats);
+        setNewAsset(prev => ({ ...prev, category_id: cats[0].id }));
+      }
+      setDepartments(depts);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setIsLoading(false);
     }
-    setDepartments(depts);
-    setIsLoading(false);
   };
 
   const handleImageChange = (e) => {
@@ -72,42 +77,44 @@ export default function AssetRegistry() {
   const handleRegister = async (e) => {
     e.preventDefault();
     
-    // Package payload as FormData to handle binary image data
-    const formData = new FormData();
-    formData.append("name", newAsset.name);
-    formData.append("category", newAsset.category);
-    formData.append("serialNumber", newAsset.serialNumber);
-    formData.append("cost", newAsset.cost);
-    formData.append("condition", newAsset.condition);
-    formData.append("location", newAsset.location);
-    formData.append("isBookable", newAsset.isBookable);
-    if (assetImage) {
-      formData.append("image", assetImage); // Binary stream data
-    }
+    // Generate a temporary mock tag (in production, use a DB trigger)
+    const tagCounter = Math.floor(Math.random() * 10000);
+    const newTag = `AF-${String(tagCounter).padStart(4, '0')}`;
     
-    // Configuration for the simulated POST request
-    const config = {
-      headers: { 'Content-Type': 'multipart/form-data' }
+    const assetData = {
+      asset_tag: newTag,
+      name: newAsset.name,
+      category_id: newAsset.category_id,
+      serial_number: newAsset.serialNumber,
+      acquisition_cost: newAsset.cost ? parseFloat(newAsset.cost) : null,
+      condition: newAsset.condition,
+      location: newAsset.location,
+      status: "Available"
     };
 
-    await inventoryApi.registerAsset(formData, config);
-    setIsDrawerOpen(false);
-    
-    // Reset form and revoke URL
-    setNewAsset({
-      name: "",
-      category: categories[0] || "",
-      serialNumber: "",
-      cost: "",
-      condition: "New",
-      location: "",
-      isBookable: false
-    });
-    setAssetImage(null);
-    if (imagePreview) URL.revokeObjectURL(imagePreview);
-    setImagePreview(null);
-    
-    fetchData();
+    try {
+      await DataService.createAsset(assetData);
+      setIsDrawerOpen(false);
+      
+      // Reset form
+      setNewAsset({
+        name: "",
+        category_id: categories[0]?.id || "",
+        serialNumber: "",
+        cost: "",
+        condition: "New",
+        location: "",
+        isBookable: false
+      });
+      setAssetImage(null);
+      if (imagePreview) URL.revokeObjectURL(imagePreview);
+      setImagePreview(null);
+      
+      fetchData();
+    } catch (error) {
+      console.error("Error creating asset:", error);
+      alert("Failed to create asset.");
+    }
   };
 
   const StatusBadge = ({ status }) => {
@@ -169,7 +176,7 @@ export default function AssetRegistry() {
             className="p-2 border border-navy/20 rounded-md bg-white text-sm focus:border-navy focus:outline-none min-w-[140px]"
           >
             <option value="All">All Categories</option>
-            {categories.map(c => <option key={c} value={c}>{c}</option>)}
+            {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
           </select>
 
           <select 
@@ -271,8 +278,8 @@ export default function AssetRegistry() {
 
               <div>
                 <label className="block text-sm font-bold text-charcoal mb-1">Category</label>
-                <select required value={newAsset.category} onChange={e => setNewAsset({...newAsset, category: e.target.value})} className="w-full p-2.5 border border-navy/20 rounded-md bg-white outline-none focus:border-navy focus:ring-2 focus:ring-navy/10 transition">
-                  {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                <select required value={newAsset.category_id} onChange={e => setNewAsset({...newAsset, category_id: e.target.value})} className="w-full p-2.5 border border-navy/20 rounded-md bg-white outline-none focus:border-navy focus:ring-2 focus:ring-navy/10 transition">
+                  {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
 
